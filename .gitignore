@@ -1,0 +1,23 @@
+# ─── Secrets (NEVER commit) ─────────────────────────────
+.env
+.env.local
+
+# ─── Claude personal overrides ──────────────────────────
+.claude/local.md
+api/.claude/local.md
+client/.claude/local.md
+
+# ─── .NET ───────────────────────────────────────────────
+bin/
+obj/
+*.user
+.vs/
+
+# ─── Node ───────────────────────────────────────────────
+node_modules/
+dist/
+.next/
+
+# ─── OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
