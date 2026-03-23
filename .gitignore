@@ -4,8 +4,12 @@
 
 # ─── Claude personal overrides ──────────────────────────
 .claude/local.md
+.claude/settings.local.json
 api/.claude/local.md
 client/.claude/local.md
+CLAUDE.local.md
+api/CLAUDE.local.md
+client/CLAUDE.local.md
 
 # ─── .NET ───────────────────────────────────────────────
 bin/
