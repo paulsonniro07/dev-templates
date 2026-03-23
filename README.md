@@ -26,11 +26,16 @@ cp .env.example .env
 Open `.env` and fill in all values.
 
 ### Step 3 — Install Claude Code global rules (first time only)
+Copy the contents of [`.claude/CLAUDE.md`](.claude/CLAUDE.md) into `~/.claude/CLAUDE.md` on your machine
+so Claude applies these standards to every project. Ask Claude: _"What are my global coding standards?"_ to verify.
+
 ```bash
 # Mac/Linux
-mkdir -p ~/.claude
-# Copy contents of global/CLAUDE.md to ~/.claude/CLAUDE.md
-# OR ask Claude: "What are my global coding standards?" to verify it's loaded
+mkdir -p ~/.claude && cp .claude/CLAUDE.md ~/.claude/CLAUDE.md
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force ~/.claude
+Copy-Item .claude/CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
 ### Step 4 — Scaffold the .NET solution
