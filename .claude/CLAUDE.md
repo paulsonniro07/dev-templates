@@ -1,45 +1,27 @@
-# [PROJECT_NAME] — Monorepo
-# ASP.NET Core 10 API + React/TypeScript Frontend
-# ⚠️  Replace [PROJECT_NAME] everywhere before first use
-# Tip: VS Code Ctrl+Shift+H → find [PROJECT_NAME] → replace all
-
-## Project Overview
-[2-3 lines: what this project does, who uses it]
+# [PROJECT_NAME]
+# Monorepo: ASP.NET Core 10 API + React/TypeScript Frontend
+# Replace [PROJECT_NAME] everywhere → VS Code Ctrl+Shift+H
 
 ## Stack
-- Backend:  .NET 10, ASP.NET Core API, PostgreSQL, EF Core, JWT
-- Frontend: React 18 + TypeScript + Tailwind CSS + Vite
-- Deploy:   Railway (API) + Vercel (client)
-- Docker:   dev + prod
+- API: .NET 10, ASP.NET Core, PostgreSQL, EF Core, JWT, Swagger
+- Client: React 18, TypeScript, Tailwind CSS, Vite
+- Deploy: Railway (api) + Vercel (client) | Dev: Docker
 
-## Detailed Rules
-All coding standards are split into focused files in `.claude/rules/`:
-- `rules/data-rules.md`      — Soft delete, pagination
-- `rules/config-rules.md`    — Secrets, Docker
-- `rules/stack-rules.md`     — .NET version, architecture guide, proven patterns
-- `rules/ui-rules.md`        — Searchable dropdowns, UX standards, color tokens
-- `rules/coding-patterns.md` — Git workflow, anti-patterns, response style
+## Commands
+- Run all:      docker-compose up --build
+- API only:     cd api && dotnet run --project src/[PROJECT_NAME].API
+- Client only:  cd client && npm run dev
+- Migration:    cd api && ./migrate.sh [MigrationName]
+- Swagger:      http://localhost:8080/swagger (dev only)
 
-API-specific rules: `api/.claude/CLAUDE.md` + `api/.claude/rules/`
-Frontend-specific rules: `client/.claude/CLAUDE.md` + `client/.claude/rules/`
+## Rules (apply to everything)
+- Soft delete only — IsDeleted=true, never SQL DELETE
+- All lists use PaginationFilter — no raw lists ever
+- All secrets in .env — never hardcoded
+- Docker for every environment
+- Searchable dropdowns — async, { id, label }, IsDeleted filtered
+- Plan before coding — describe, wait for approval, then build
 
-## Development Commands
-```bash
-# Run everything
-docker-compose up --build
-
-# Backend only
-cd api && dotnet run --project src/[PROJECT_NAME].API
-
-# Frontend only
-cd client && npm run dev
-
-# New migration
-cd api && ./migrate.sh [MigrationName]
-```
-
-## Git Workflow
-- Branch: git checkout -b feat/description
-- Prefixes: feat:, fix:, refactor:, chore:, docs:
-- Never commit to main directly
-- Never commit .env
+## Git
+- Always branch: git checkout -b feat/description
+- Never commit .env or directly to main
