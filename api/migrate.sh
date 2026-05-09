@@ -1,61 +1,73 @@
 #!/usr/bin/env bash
 # Usage: ./migrate.sh <MigrationName>
-# Run from the api/ directory. Reads credentials from .env.
 
-set -e
+# NO set -e — we handle errors manually so output stays visible
 
-# Guard: must run from api/ directory
-if [ ! -f "migrate.sh" ]; then
-  echo "Error: Run this script from the api/ directory."
-  echo "  cd api && ./migrate.sh <MigrationName>"
+die() {
+  echo ""
+  echo "ERROR: $1"
+  echo ""
+  echo "Press Enter to close..."
+  read -r
   exit 1
-fi
+}
 
 if [ -z "$1" ]; then
   echo "Usage: ./migrate.sh <MigrationName>"
+  echo "Press Enter to close..."
+  read -r
   exit 1
 fi
 
 MIGRATION_NAME="$1"
 
-# Load .env safely (handles spaces, quotes, inline comments)
-if [ -f .env ]; then
-  while IFS='=' read -r key value; do
-    [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
-    value="${value%%#*}"
-    value="${value%\"}"
-    value="${value#\"}"
-    value="${value%\'}"
-    value="${value#\'}"
-    value="$(echo "$value" | xargs)"
-    export "$key=$value"
-  done < .env
+# Load .env — check repo root first, then current dir
+if [ -f ../.env ]; then
+  echo "==> Loading ../.env"
+  set -a
+  source ../.env
+  set +a
+elif [ -f .env ]; then
+  echo "==> Loading .env"
+  set -a
+  source .env
+  set +a
 else
-  echo "Error: .env file not found."
-  echo "  Copy .env.example to .env and fill in values."
-  exit 1
+  die ".env file not found. Copy .env.example to .env and fill in values."
 fi
 
-# Check dotnet ef is available
-if ! dotnet ef --version &>/dev/null; then
-  echo "Error: dotnet-ef tool not found."
-  echo "  Install it with: dotnet tool install --global dotnet-ef"
-  exit 1
+echo "==> DB_NAME=${DB_NAME} DB_USER=${DB_USER}"
+
+if [ -z "$DB_NAME" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
+  die "DB_NAME, DB_USER, or DB_PASSWORD is empty in .env"
 fi
 
 echo "==> Generating migration: $MIGRATION_NAME"
-cd src/[ProjectName].API
-ConnectionStrings__DefaultConnection="Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}" \
+ConnectionStrings__DefaultConnection="Host=localhost;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}" \
   dotnet ef migrations add "$MIGRATION_NAME" \
-    --project ../[ProjectName].Infrastructure \
-    --startup-project . \
-    --output-dir ../../migrations
-cd ../..
+    --project src/SlipGaji.Infrastructure \
+    --startup-project src/SlipGaji.API \
+    --output-dir Persistence/Migrations \
+    --verbose
 
-echo "==> Rebuilding API container..."
+if [ $? -ne 0 ]; then
+  die "dotnet ef migrations add failed. See output above."
+fi
+
+echo ""
+echo "==> Migration generated. Rebuilding API container..."
 docker compose build api
+if [ $? -ne 0 ]; then
+  die "docker compose build api failed."
+fi
 
-echo "==> Restarting API container (migration applied on startup via db.Migrate())..."
+echo "==> Restarting API container..."
 docker compose up -d api
+if [ $? -ne 0 ]; then
+  die "docker compose up api failed."
+fi
 
+echo ""
 echo "==> Done! Migration '$MIGRATION_NAME' applied."
+echo "Press Enter to close..."
+read -r
