@@ -1,0 +1,45 @@
+# [PROJECT_NAME] API — Cline Rules
+# .NET 10 | PostgreSQL | Clean Architecture | JWT | Swagger
+
+## What this does
+[2-3 lines: what this API does, who uses it]
+
+## Stack
+- .NET 10, ASP.NET Core, PostgreSQL, EF Core, JWT, Swagger
+- Deploy: Railway | Dev: Docker
+
+## Commands
+- Build:     dotnet build
+- Run:       dotnet run --project src/[PROJECT_NAME].API
+- Migration: ./migrate.sh [MigrationName]  ← ASK before running
+- Swagger:   http://localhost:8080/swagger (dev only)
+
+## API Endpoints Convention
+GET    /api/[resource]               → paged list
+GET    /api/[resource]/{id}          → single item
+GET    /api/[resource]/dropdown      → [{ id, label }]
+POST   /api/[resource]               → create
+PUT    /api/[resource]/{id}          → update
+DELETE /api/[resource]/{id}          → soft delete (IsDeleted=true)
+PUT    /api/[resource]/{id}/restore  → restore
+POST   /api/auth/login               → { token, user: { permissions[] } }
+GET    /api/auth/me                  → current user
+
+## Rules
+- Run dotnet build after every change — fix before continuing
+- Never commit .env — only .env.example
+- Ask before running ./migrate.sh — confirm name first
+- Controllers thin — MediatR dispatch only, no business logic
+- DTOs at all boundaries — never expose domain entities
+
+## Detailed Rules
+@.cline/rules/clean-architecture.md
+@.cline/rules/entity-patterns.md
+@.cline/rules/csharp-style.md
+
+## Reference Docs
+@agent_docs/database-schema.md  ← read when touching entities or migrations
+@agent_docs/api-contracts.md    ← read when adding or changing endpoints
+@agent_docs/docker-setup.md     ← read when touching Docker or env vars
+@agent_docs/architecture.md     ← read when making architecture decisions
+@agent_docs/coding-style.md     ← read for exact C# patterns to follow

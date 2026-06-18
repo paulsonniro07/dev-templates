@@ -25,8 +25,3 @@ dist/
 # ─── OS ─────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# Cline personal overrides
-.cline/local.md
-api/.cline/local.md
-client/.cline/local.md

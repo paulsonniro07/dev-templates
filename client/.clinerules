@@ -1,0 +1,36 @@
+# [PROJECT_NAME] Client — Cline Rules
+# React 18 + TypeScript + Tailwind CSS + Vite
+
+## What this does
+[2-3 lines: what this frontend does, who uses it]
+
+## Commands
+- Dev:        npm run dev
+- Build:      npm run build
+- Type check: npx tsc --noEmit
+
+## Rules
+- Run npm run build before finishing any feature
+- No any, no @ts-ignore — TypeScript strict always
+- Named exports only — no default exports for components
+- Tailwind only — no inline styles, no magic hex codes
+- Own components only — no external UI library (no shadcn, no MUI)
+- Every list: loading skeleton + empty state + error toast
+- Every form: inline validation + disabled submit while loading + toast
+- Search debounced 300ms always
+
+## Auth Pattern
+- JWT in localStorage, initFromStorage() lazy init prevents refresh race
+- 401 → clear auth + redirect /login
+- 403 on mutations only → global toast (never on GET)
+
+## Detailed Rules
+@.cline/rules/component-rules.md
+@.cline/rules/typescript-rules.md
+@.cline/rules/ux-rules.md
+
+## Reference Docs
+@agent_docs/component-patterns.md ← read when building any component
+@agent_docs/api-contracts.md      ← read when calling backend endpoints
+@agent_docs/state-management.md   ← read when touching auth or state
+@agent_docs/ux-ui-guide.md        ← read for colors, spacing, UX rules
