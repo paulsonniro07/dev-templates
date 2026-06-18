@@ -6,7 +6,7 @@
 - **API:** .NET 10, ASP.NET Core, PostgreSQL, JWT
 - **Client:** React 18, TypeScript, Tailwind CSS, Vite
 - **Deploy:** Railway (API) + Vercel (Client)
-- **AI Coding Agent:** Claude Code OR Cline (DeepSeek) — pick one below
+- **AI Coding Agent:** Claude Code OR Cline — pick one below
 
 ---
 
@@ -33,7 +33,7 @@ This template supports **two agents** — pick whichever you're using. Both read
 <table>
 <tr>
 <th>🟣 Claude Code</th>
-<th>🔵 Cline (DeepSeek)</th>
+<th>🔵 Cline</th>
 </tr>
 <tr>
 <td>
@@ -57,7 +57,7 @@ Verify: ask Claude *"What are my global coding standards?"*
 
 Nothing to install globally. Cline reads `.clinerules` automatically the moment you open this folder in VS Code — at root, and again inside `api/` or `client/` depending on where you're working.
 
-Just make sure the Cline extension is installed and pointed at your DeepSeek API key (`https://api.deepseek.com`, model `deepseek-chat`) in the Cline sidebar settings.
+Just make sure the Cline extension is installed and pointed at your API key in the Cline sidebar settings.
 
 Verify: ask Cline *"What are the project rules?"*
 
@@ -94,7 +94,7 @@ npm install -D @types/node
 <table>
 <tr>
 <th>🟣 Claude Code</th>
-<th>🔵 Cline (DeepSeek)</th>
+<th>🔵 Cline</th>
 </tr>
 <tr>
 <td>
@@ -151,7 +151,7 @@ docker-compose up --build
 cd api && ./migrate.sh AddCustomerTable
 ```
 
-| Task | 🟣 Claude Code | 🔵 Cline (DeepSeek) |
+| Task | 🟣 Claude Code | 🔵 Cline|
 |---|---|---|
 | Plan before coding | `/plan [describe feature]` | "Plan [describe feature]. Don't code yet." |
 | Scaffold full module | `/new-module [ModuleName]` | "Scaffold a new module called [ModuleName] following the module checklist in the rules." |
@@ -190,4 +190,4 @@ Cline has no built-in slash commands, so these are typed as plain instructions �
 └── docker-compose.yml
 ```
 
-> Both `.claude/` and `.cline/` exist so the template works whether you're running Claude Code or Cline + DeepSeek — they read the same architectural standards, just in the format each tool expects. `agent_docs/` is the shared source of truth referenced by both.
+> Both `.claude/` and `.cline/` exist so the template works whether you're running Claude Code or Cline — they read the same architectural standards, just in the format each tool expects. `agent_docs/` is the shared source of truth referenced by both.
