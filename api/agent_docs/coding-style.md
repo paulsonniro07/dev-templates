@@ -1,5 +1,5 @@
 # Coding Style — [PROJECT_NAME]
-# Exact patterns Claude follows when writing backend code
+# Exact patterns agents follow when writing backend code
 
 ## C# Rules
 - All public methods async, return Task<T>

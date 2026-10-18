@@ -7,4 +7,4 @@ Fix: **$ARGUMENTS**
 ### 2. Propose fix — explain before applying
 ### 3. Apply minimal change — don't touch unrelated code
 ### 4. Verify — run dotnet build, confirm fix
-### 5. Prevent — suggest test or CLAUDE.md rule if needed
+### 5. Prevent — suggest a test or an AGENTS.md rule if needed

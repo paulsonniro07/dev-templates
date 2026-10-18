@@ -3,69 +3,33 @@
 [2-3 lines: what this project does]
 
 ## Stack
-- **API:** .NET 10, ASP.NET Core, PostgreSQL, JWT
+
+- **API:** .NET 10, ASP.NET Core, PostgreSQL, EF Core, JWT, Swagger
 - **Client:** React 18, TypeScript, Tailwind CSS, Vite
 - **Deploy:** Railway (API) + Vercel (Client)
-- **AI Coding Agent:** Claude Code OR Cline — pick one below
+- **Dev:** Docker Compose
 
 ---
 
-## 🚀 Quick Start After Cloning
+## Quick start
 
-### Step 1 — Replace placeholders
-In VS Code: `Ctrl+Shift+H` (Windows) or `Cmd+Shift+H` (Mac)
-- Find: `[PROJECT_NAME]`
-- Replace: your actual project name (e.g. `CRMSystem`)
-- Click **Replace All**
+### 1. Replace placeholders
 
-Do the same for `[ProjectName]` (PascalCase used in .NET filenames).
+In VS Code: `Ctrl+Shift+H` (Windows) or `Cmd+Shift+H` (Mac).
 
-### Step 2 — Setup environment
+- Find `[PROJECT_NAME]` → your project name (e.g. `CRMSystem`)
+- Find `[ProjectName]` → PascalCase name used in .NET files (e.g. `Crmsystem`)
+
+### 2. Set up environment
+
 ```bash
 cp .env.example .env
 ```
-Open `.env` and fill in all values.
 
-### Step 3 — Set up your AI coding agent
+Fill in every value in `.env`.
 
-This template supports **two agents** — pick whichever you're using. Both read from the same `agent_docs/` and follow the same architecture rules; only the rule file format differs.
+### 3. Scaffold the .NET solution
 
-<table>
-<tr>
-<th>🟣 Claude Code</th>
-<th>🔵 Cline</th>
-</tr>
-<tr>
-<td>
-
-Copy the contents of [`.claude/CLAUDE.md`](.claude/CLAUDE.md) into `~/.claude/CLAUDE.md`
-so Claude applies these standards to every project.
-
-```bash
-# Mac/Linux
-mkdir -p ~/.claude && cp .claude/CLAUDE.md ~/.claude/CLAUDE.md
-
-# Windows (PowerShell)
-New-Item -ItemType Directory -Force ~/.claude
-Copy-Item .claude/CLAUDE.md ~/.claude/CLAUDE.md
-```
-
-Verify: ask Claude *"What are my global coding standards?"*
-
-</td>
-<td>
-
-Nothing to install globally. Cline reads `.clinerules` automatically the moment you open this folder in VS Code — at root, and again inside `api/` or `client/` depending on where you're working.
-
-Just make sure the Cline extension is installed and pointed at your API key in the Cline sidebar settings.
-
-Verify: ask Cline *"What are the project rules?"*
-
-</td>
-</tr>
-</table>
-
-### Step 4 — Scaffold the .NET solution
 ```bash
 cd api
 dotnet new sln -n [PROJECT_NAME]
@@ -80,7 +44,8 @@ dotnet sln add src/[PROJECT_NAME].API/[PROJECT_NAME].API.csproj
 dotnet build
 ```
 
-### Step 5 — Scaffold the React app
+### 4. Scaffold the React app
+
 ```bash
 cd client
 npm create vite@latest . -- --template react-ts
@@ -89,105 +54,141 @@ npm install tailwindcss @tailwindcss/vite axios react-router-dom
 npm install -D @types/node
 ```
 
-### Step 6 — Let your agent build the foundation
+### 5. Open your agent
 
-<table>
-<tr>
-<th>🟣 Claude Code</th>
-<th>🔵 Cline</th>
-</tr>
-<tr>
-<td>
+No global install and no per-agent setup is required. Open the project folder in your editor; the agent picks up the rules automatically.
 
-Open VS Code → click ⚡ Claude panel → open terminal in `api/`:
-```
-/plan setup Clean Architecture foundation with BaseEntity, PaginationFilter,
-IGenericRepository, GlobalExceptionMiddleware, AuditEntityInterceptor,
-JWT auth, PostgreSQL EF Core, and Program.cs wiring
-```
+| Agent | Reads | Setup |
+|---|---|---|
+| opencode | `AGENTS.md` (root + nested) | none |
+| Claude Code | `CLAUDE.md` / `.claude/CLAUDE.md` shims | none |
+| Cline | `.clinerules` shims | none |
+| Codex, Cursor, Gemini CLI, Jules, Copilot | `AGENTS.md` | none |
+| Anything else | point it at `AGENTS.md` | one line |
 
-Then in `client/`:
-```
-/plan setup frontend foundation with AuthContext, Axios interceptor,
-usePermissions hook, PermissionRoute, Layout sidebar, own UI component
-library (Button, Input, Badge, Spinner, EmptyState, Pagination, SearchInput, Modal),
-and React Router setup
-```
+### 6. Ask your agent to build the foundation
 
-</td>
-<td>
+Always plan first. In opencode, switch to plan mode (`Tab`) and send:
 
-Open the Cline panel in `api/` and describe the same request in plain language — Cline has no slash commands, but `.clinerules` already tells it to plan first and wait for approval:
 ```
-Plan a Clean Architecture foundation with BaseEntity, PaginationFilter,
+Plan the Clean Architecture foundation: BaseEntity, PaginationFilter,
 IGenericRepository, GlobalExceptionMiddleware, AuditEntityInterceptor,
 JWT auth, PostgreSQL EF Core, and Program.cs wiring. Don't code yet.
 ```
 
 Then in `client/`:
+
 ```
-Plan a frontend foundation with AuthContext, Axios interceptor,
-usePermissions hook, PermissionRoute, Layout sidebar, own UI component
-library (Button, Input, Badge, Spinner, EmptyState, Pagination, SearchInput, Modal),
+Plan the frontend foundation: AuthContext, Axios interceptor,
+usePermissions, PermissionRoute, Layout, own UI components
+(Button, Input, Badge, Spinner, EmptyState, Pagination, SearchInput, Modal),
 and React Router setup. Don't code yet.
 ```
 
-</td>
-</tr>
-</table>
+Review the plan, then approve. The agent must not write code before approval.
 
-### Step 7 — Run everything
+### 7. Run everything
+
 ```bash
-# From project root
 docker-compose up --build
 ```
 
 ---
 
-## 📋 Daily Commands
+## How the rules work
+
+`AGENTS.md` is the single source of truth. `.clinerules` and `CLAUDE.md` are one-line shims that import it — they contain no rules of their own, so nothing drifts.
+
+```
+AGENTS.md                 ← all hard rules and workflow
+api/AGENTS.md             ← backend rules
+client/AGENTS.md          ← frontend rules
+api/agent_docs/           ← deep backend docs (patterns, schema, contracts)
+client/agent_docs/        ← deep frontend docs (components, UX, state)
+```
+
+Deeper docs are read on demand when the related work happens:
+
+| Topic | File |
+|---|---|
+| Architecture decisions | `api/agent_docs/architecture.md` |
+| DB schema and query patterns | `api/agent_docs/database-schema.md` |
+| Endpoints and response shapes | `api/agent_docs/api-contracts.md`, `client/agent_docs/api-contracts.md` |
+| C# patterns | `api/agent_docs/coding-style.md` |
+| New backend module | `api/agent_docs/module-checklist.md` |
+| New frontend module | `client/agent_docs/module-checklist.md` |
+| Components | `client/agent_docs/component-patterns.md` |
+| UX / colors / spacing | `client/agent_docs/ux-ui-guide.md` |
+| Auth and state | `client/agent_docs/state-management.md` |
+| Docker and env vars | `api/agent_docs/docker-setup.md` |
+| Testing | `api/agent_docs/testing.md`, `client/agent_docs/testing.md` |
+
+## Workflow with any agent
+
+1. **Plan** — describe the feature; agent proposes files and risks.
+2. **Approve** — say "go". Nothing is written before this.
+3. **Build** — only the approved scope.
+4. **Verify** — `dotnet build`, `npm run build`, `npx tsc --noEmit`.
+5. **Report** — changed files and results.
+
+No slash commands are required — plain prompts work with every model:
+
+| Task | Prompt |
+|---|---|
+| Plan | "Plan [feature]. Don't code yet." |
+| New module | "Scaffold the [Module] module following `api/agent_docs/module-checklist.md`." |
+| Review | "Review this against AGENTS.md and the module checklists." |
+| Bug fix | "Find the root cause first, then fix: [bug]." |
+
+## Daily commands
 
 ```bash
-# New migration
+# Everything
+docker-compose up --build
+
+# API only
+cd api && dotnet run --project src/[PROJECT_NAME].API
+
+# Client only
+cd client && npm run dev
+
+# New migration (ask your agent first)
 cd api && ./migrate.sh AddCustomerTable
 ```
 
-| Task | 🟣 Claude Code | 🔵 Cline|
-|---|---|---|
-| Plan before coding | `/plan [describe feature]` | "Plan [describe feature]. Don't code yet." |
-| Scaffold full module | `/new-module [ModuleName]` | "Scaffold a new module called [ModuleName] following the module checklist in the rules." |
-| Review against standards | `/review` | "Review this against the architecture, soft delete, and pagination rules." |
-| Root-cause bug fix | `/fix [describe bug]` | "Fix this bug — find the root cause first: [describe bug]" |
+## Verification before finishing
 
-Cline has no built-in slash commands, so these are typed as plain instructions — `.clinerules` already primes it to follow the same plan → approve → build → verify workflow as Claude Code's commands.
+- API: `dotnet build`
+- Client: `npm run build` and `npx tsc --noEmit`
+- Existing tests must still pass (`dotnet test`, `npm run test` if present)
+- New tests only when explicitly requested — standards in the testing docs
 
----
+## Structure
 
-## 📁 Structure
 ```
 [PROJECT_NAME]/
-├── api/                 ← ASP.NET Core API
-│   ├── .claude/         ← API-specific Claude Code rules
-│   ├── .cline/           ← API-specific Cline rules
-│   ├── .clinerules      ← Cline entry point (api scope)
-│   ├── agent_docs/      ← Architecture, schema, contracts docs (shared by both agents)
-│   ├── src/             ← .NET source projects
-│   ├── migrations/      ← EF Core migrations
+├── AGENTS.md                 ← rules for every agent
+├── CLAUDE.md                 ← shim → AGENTS.md
+├── .clinerules               ← shim → AGENTS.md
+├── api/
+│   ├── AGENTS.md             ← backend rules
+│   ├── CLAUDE.md             ← shim
+│   ├── .clinerules           ← shim
+│   ├── agent_docs/           ← architecture, schema, contracts, style, docker, testing
+│   ├── src/                  ← .NET projects
+│   ├── migrations/           ← EF Core migrations
 │   ├── Dockerfile.api
 │   └── migrate.sh
-├── client/              ← React Frontend
-│   ├── .claude/         ← Frontend-specific Claude Code rules
-│   ├── .cline/           ← Frontend-specific Cline rules
-│   ├── .clinerules      ← Cline entry point (client scope)
-│   ├── agent_docs/      ← Component patterns, UX guide, state docs (shared by both agents)
-│   ├── src/             ← React source
+├── client/
+│   ├── AGENTS.md             ← frontend rules
+│   ├── CLAUDE.md             ← shim
+│   ├── .clinerules           ← shim
+│   ├── agent_docs/           ← components, UX, state, contracts, testing
+│   ├── src/                  ← React source
 │   ├── Dockerfile
 │   └── nginx.conf
-├── .claude/             ← Root monorepo Claude Code context
-├── .cline/               ← Root monorepo Cline rules
-├── .clinerules          ← Cline entry point (root scope)
-├── .env.example         ← All env vars documented
+├── .env.example
+├── .editorconfig
 ├── .gitignore
 └── docker-compose.yml
 ```
-
-> Both `.claude/` and `.cline/` exist so the template works whether you're running Claude Code or Cline — they read the same architectural standards, just in the format each tool expects. `agent_docs/` is the shared source of truth referenced by both.

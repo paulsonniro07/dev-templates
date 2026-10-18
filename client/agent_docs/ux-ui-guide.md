@@ -1,5 +1,5 @@
 # UX/UI Guide — [PROJECT_NAME]
-# Standards Claude follows for all UI decisions
+# Standards agents follow for all UI decisions
 
 ## Color System (Tailwind tokens — no magic hex codes)
 

@@ -5,6 +5,7 @@
 # ─── Claude personal overrides ──────────────────────────
 .claude/local.md
 .claude/settings.local.json
+.claude/worktrees/
 api/.claude/local.md
 client/.claude/local.md
 CLAUDE.local.md
@@ -27,6 +28,6 @@ dist/
 Thumbs.db
 
 # Cline personal overrides
-.cline/local.md
-api/.cline/local.md
-client/.cline/local.md
+.clinerules.local
+api/.clinerules.local
+client/.clinerules.local

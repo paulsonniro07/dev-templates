@@ -1,5 +1,5 @@
 # Component Patterns — [PROJECT_NAME] Frontend
-# Exact patterns Claude follows for all UI components
+# Exact patterns agents follow for all UI components
 
 ## Own Component Library (src/components/ui/)
 These are YOUR components — no external library dependency.
