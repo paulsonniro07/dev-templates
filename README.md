@@ -1,24 +1,60 @@
-# [PROJECT_NAME]
+# Full-Stack Project Template
 
-[2-3 lines: what this project does]
+A starting point for **ASP.NET Core 10 + React/TypeScript** apps that AI coding agents can build correctly without being told the rules twice.
 
-## Stack
+Rules are written for agents first: any tool that reads `AGENTS.md` gets the same standards, the same workflow, and the same architecture.
 
-- **API:** .NET 10, ASP.NET Core, PostgreSQL, EF Core, JWT, Swagger
-- **Client:** React 18, TypeScript, Tailwind CSS, Vite
-- **Deploy:** Railway (API) + Vercel (Client)
-- **Dev:** Docker Compose
+## What this template gives you
+
+- **Clean Architecture API** — Domain / Application / Infrastructure / API with enforced layer boundaries
+- **Data rules baked in** — soft delete only, pagination on every list, searchable dropdowns, audit fields
+- **React frontend** — own component library (no external UI lib), consistent UX states, typed API layer
+- **Docker from day one** — PostgreSQL + API + client with `.env`-driven compose
+- **One rule source** — `AGENTS.md`; Claude Code and Cline get one-line shims, no duplicated rules
+- **Module checklists** — deterministic file-by-file scaffolding for new backend and frontend modules
+- **JWT auth foundation** — login/me endpoints, permission guards, bootstrap admin from env vars
+
+## Requirements
+
+- .NET 10 SDK
+- Node.js 20+
+- Docker Desktop
+- Git
+- An AI coding agent (opencode recommended; any `AGENTS.md`-aware tool works)
 
 ---
 
-## Quick start
+## Use this template
 
-### 1. Replace placeholders
+### Option A — GitHub (recommended)
+
+1. Open this repository on GitHub
+2. Click **Use this template** → **Create a new repository**
+3. Clone your new repository
+
+### Option B — manual
+
+```bash
+git clone https://github.com/paulsonniro07/dev-templates.git my-app
+cd my-app
+```
+
+Delete the `.git` folder, then initialise a fresh repository.
+
+---
+
+## Set up your project
+
+### 1. Replace the placeholder
+
+This template uses a single placeholder: `[PROJECT_NAME]`.
 
 In VS Code: `Ctrl+Shift+H` (Windows) or `Cmd+Shift+H` (Mac).
 
 - Find `[PROJECT_NAME]` → your project name (e.g. `CRMSystem`)
-- Find `[ProjectName]` → PascalCase name used in .NET files (e.g. `Crmsystem`)
+- Click **Replace All**
+
+Use one consistent value — it becomes the solution name, .NET namespaces, Docker image names, and the default database name.
 
 ### 2. Set up environment
 
@@ -26,7 +62,7 @@ In VS Code: `Ctrl+Shift+H` (Windows) or `Cmd+Shift+H` (Mac).
 cp .env.example .env
 ```
 
-Fill in every value in `.env`.
+Fill in every value in `.env`. Secrets never belong in source code.
 
 ### 3. Scaffold the .NET solution
 
@@ -56,9 +92,9 @@ npm install -D @types/node
 
 ### 5. Open your agent
 
-No global install and no per-agent setup is required. Open the project folder in your editor; the agent picks up the rules automatically.
+No global install is required. Open the project folder; the agent loads the rules automatically.
 
-| Agent | Reads | Setup |
+| Agent | Rule file it reads | Setup |
 |---|---|---|
 | opencode | `AGENTS.md` (root + nested) | none |
 | Claude Code | `CLAUDE.md` / `.claude/CLAUDE.md` shims | none |
@@ -66,9 +102,9 @@ No global install and no per-agent setup is required. Open the project folder in
 | Codex, Cursor, Gemini CLI, Jules, Copilot | `AGENTS.md` | none |
 | Anything else | point it at `AGENTS.md` | one line |
 
-### 6. Ask your agent to build the foundation
+### 6. Ask the agent for the foundation
 
-Always plan first. In opencode, switch to plan mode (`Tab`) and send:
+The template enforces **plan first, approve, then build**. In opencode, switch to plan mode (`Tab`) and send:
 
 ```
 Plan the Clean Architecture foundation: BaseEntity, PaginationFilter,
@@ -85,7 +121,7 @@ usePermissions, PermissionRoute, Layout, own UI components
 and React Router setup. Don't code yet.
 ```
 
-Review the plan, then approve. The agent must not write code before approval.
+Review the plan. If it is correct, approve it. The agent must not write code before approval.
 
 ### 7. Run everything
 
@@ -93,21 +129,24 @@ Review the plan, then approve. The agent must not write code before approval.
 docker-compose up --build
 ```
 
+Swagger (development only): http://localhost:8080/swagger
+
 ---
 
 ## How the rules work
 
-`AGENTS.md` is the single source of truth. `.clinerules` and `CLAUDE.md` are one-line shims that import it — they contain no rules of their own, so nothing drifts.
+`AGENTS.md` is the single source of truth. Tool-specific files contain no rules of their own:
 
 ```
 AGENTS.md                 ← all hard rules and workflow
 api/AGENTS.md             ← backend rules
 client/AGENTS.md          ← frontend rules
-api/agent_docs/           ← deep backend docs (patterns, schema, contracts)
-client/agent_docs/        ← deep frontend docs (components, UX, state)
+CLAUDE.md                 ← shim → AGENTS.md (Claude Code)
+.clinerules               ← shim → AGENTS.md (Cline)
+api/CLAUDE.md, etc.       ← nested shims for scoped work
 ```
 
-Deeper docs are read on demand when the related work happens:
+Deep knowledge lives in `agent_docs/` and is read on demand:
 
 | Topic | File |
 |---|---|
@@ -123,13 +162,15 @@ Deeper docs are read on demand when the related work happens:
 | Docker and env vars | `api/agent_docs/docker-setup.md` |
 | Testing | `api/agent_docs/testing.md`, `client/agent_docs/testing.md` |
 
-## Workflow with any agent
+If a tool file and `AGENTS.md` ever disagree, `AGENTS.md` wins. Project rules also win over global user rules.
 
-1. **Plan** — describe the feature; agent proposes files and risks.
-2. **Approve** — say "go". Nothing is written before this.
-3. **Build** — only the approved scope.
-4. **Verify** — `dotnet build`, `npm run build`, `npx tsc --noEmit`.
-5. **Report** — changed files and results.
+## Workflow the template enforces
+
+1. **Plan** — restate the request, list files and risks. No code.
+2. **Approve** — the human says "go". Nothing is written before this.
+3. **Build** — only the approved scope. No unrequested refactors.
+4. **Verify** — build and typecheck must pass.
+5. **Report** — changed files, results, anything left undone.
 
 No slash commands are required — plain prompts work with every model:
 
@@ -140,55 +181,59 @@ No slash commands are required — plain prompts work with every model:
 | Review | "Review this against AGENTS.md and the module checklists." |
 | Bug fix | "Find the root cause first, then fix: [bug]." |
 
-## Daily commands
-
-```bash
-# Everything
-docker-compose up --build
-
-# API only
-cd api && dotnet run --project src/[PROJECT_NAME].API
-
-# Client only
-cd client && npm run dev
-
-# New migration (ask your agent first)
-cd api && ./migrate.sh AddCustomerTable
-```
-
-## Verification before finishing
+## Verification
 
 - API: `dotnet build`
 - Client: `npm run build` and `npx tsc --noEmit`
 - Existing tests must still pass (`dotnet test`, `npm run test` if present)
 - New tests only when explicitly requested — standards in the testing docs
 
-## Structure
+## Daily commands
+
+```bash
+docker-compose up --build                          # everything
+cd api && dotnet run --project src/[PROJECT_NAME].API
+cd client && npm run dev
+cd api && ./migrate.sh AddCustomerTable            # ask your agent first
+```
+
+## Template structure
 
 ```
-[PROJECT_NAME]/
+/
 ├── AGENTS.md                 ← rules for every agent
 ├── CLAUDE.md                 ← shim → AGENTS.md
 ├── .clinerules               ← shim → AGENTS.md
+├── .editorconfig
+├── .env.example              ← every env var, empty values
+├── docker-compose.yml
 ├── api/
 │   ├── AGENTS.md             ← backend rules
 │   ├── CLAUDE.md             ← shim
 │   ├── .clinerules           ← shim
 │   ├── agent_docs/           ← architecture, schema, contracts, style, docker, testing
-│   ├── src/                  ← .NET projects
+│   ├── src/                  ← .NET projects (scaffolded)
 │   ├── migrations/           ← EF Core migrations
 │   ├── Dockerfile.api
 │   └── migrate.sh
-├── client/
-│   ├── AGENTS.md             ← frontend rules
-│   ├── CLAUDE.md             ← shim
-│   ├── .clinerules           ← shim
-│   ├── agent_docs/           ← components, UX, state, contracts, testing
-│   ├── src/                  ← React source
-│   ├── Dockerfile
-│   └── nginx.conf
-├── .env.example
-├── .editorconfig
-├── .gitignore
-└── docker-compose.yml
+└── client/
+    ├── AGENTS.md             ← frontend rules
+    ├── CLAUDE.md             ← shim
+    ├── .clinerules           ← shim
+    ├── agent_docs/           ← components, UX, state, contracts, testing
+    ├── src/                  ← React source (scaffolded)
+    ├── Dockerfile
+    └── nginx.conf
 ```
+
+## Working in a generated project
+
+The README is copied with the template. Replace this intro with your project's description, but keep the rules, workflow, and structure sections — they describe how the agent works.
+
+## Maintaining this template
+
+- Keep `AGENTS.md` as the only place rules live; shims must stay rule-free.
+- When changing an entity, endpoint, env var, or UI pattern, update the matching `agent_docs/` file in the same change.
+- Keep `module-checklist.md` files aligned with the actual project layout.
+- Keep `[PROJECT_NAME]` as the only placeholder — never introduce `[ProjectName]` or similar variants.
+- On GitHub: **Settings → Template repository** must stay enabled.

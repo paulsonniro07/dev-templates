@@ -6,7 +6,7 @@ File: .env (gitignored) — copy from .env.example
 
 ```
 DB_HOST=localhost
-DB_NAME=[ProjectName]
+DB_NAME=[PROJECT_NAME]
 DB_USER=postgres
 DB_PASSWORD=yourpassword
 
@@ -20,7 +20,7 @@ BOOTSTRAP_ADMIN_PASSWORD=Admin@123456
 BOOTSTRAP_ADMIN_FIRSTNAME=Admin
 BOOTSTRAP_ADMIN_LASTNAME=User
 
-APP_PORT=8080
+API_PORT=8080
 ASPNETCORE_ENVIRONMENT=Development
 ```
 
@@ -31,14 +31,14 @@ WORKDIR /app
 COPY *.sln .
 COPY src/ src/
 RUN dotnet restore
-RUN dotnet publish src/[ProjectName].API/[ProjectName].API.csproj \
+RUN dotnet publish src/[PROJECT_NAME].API/[PROJECT_NAME].API.csproj \
     -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "[ProjectName].API.dll"]
+ENTRYPOINT ["dotnet", "[PROJECT_NAME].API.dll"]
 ```
 
 ## docker-compose.yml
@@ -74,7 +74,7 @@ services:
       BootstrapAdmin__FirstName: ${BOOTSTRAP_ADMIN_FIRSTNAME}
       BootstrapAdmin__LastName: ${BOOTSTRAP_ADMIN_LASTNAME}
     ports:
-      - "${APP_PORT}:8080"
+      - "${API_PORT}:8080"
     depends_on:
       db:
         condition: service_healthy
