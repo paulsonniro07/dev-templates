@@ -1,7 +1,7 @@
 # [PROJECT_NAME] — Agent Rules
 
 Monorepo: ASP.NET Core API + React/TypeScript frontend.
-Replace `[PROJECT_NAME]` (slugs, DB names) and `[ProjectName]` (PascalCase, .NET filenames) everywhere.
+Replace `[PROJECT_NAME]` (solution, namespaces, DB name, Docker) everywhere.
 
 ## Precedence
 
